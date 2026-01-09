@@ -8,6 +8,7 @@ import (
 	"github.com/sammydepoj/golang-rest-api/dbconfig"
 	"github.com/sammydepoj/golang-rest-api/internal/handlers"
 	"github.com/sammydepoj/golang-rest-api/internal/routes"
+	"github.com/sammydepoj/golang-rest-api/internal/store"
 	"github.com/sammydepoj/golang-rest-api/serverconfig"
 )
 
@@ -24,8 +25,9 @@ func main() {
 	db := dbconfig.ConnectDB(config.DatabaseUrl)
 	defer db.Close()
 
+	queries := store.New(db)
 	//create handler
-	handler := handlers.NewHandlers()
+	handler := handlers.NewHandlers(db, queries)
 
 	// set up the http server
 	mux := http.NewServeMux()
