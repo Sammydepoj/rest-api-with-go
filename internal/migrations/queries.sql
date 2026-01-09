@@ -13,3 +13,6 @@ INSERT INTO blogs(title, content, user_id, created, updated) VALUES ($1, $2, $3,
 
 -- name: ListBlogs :many
 SELECT id, title, content, user_id, created, updated FROM blogs ORDER BY id;
+
+-- name: GetUserByUsernameOrEmail :one
+SELECT id, username,email, created, updated, password FROM users WHERE username = $1 OR email = $2;

@@ -104,6 +104,38 @@ func (q *Queries) GetUser(ctx context.Context, id int32) (GetUserRow, error) {
 	return i, err
 }
 
+const getUserByUsernameOrEmail = `-- name: GetUserByUsernameOrEmail :one
+SELECT id, username,email, created, updated, password FROM users WHERE username = $1 OR email = $2
+`
+
+type GetUserByUsernameOrEmailParams struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}
+
+type GetUserByUsernameOrEmailRow struct {
+	ID       int32        `json:"id"`
+	Username string       `json:"username"`
+	Email    string       `json:"email"`
+	Created  sql.NullTime `json:"created"`
+	Updated  sql.NullTime `json:"updated"`
+	Password string       `json:"password"`
+}
+
+func (q *Queries) GetUserByUsernameOrEmail(ctx context.Context, arg GetUserByUsernameOrEmailParams) (GetUserByUsernameOrEmailRow, error) {
+	row := q.db.QueryRowContext(ctx, getUserByUsernameOrEmail, arg.Username, arg.Email)
+	var i GetUserByUsernameOrEmailRow
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Created,
+		&i.Updated,
+		&i.Password,
+	)
+	return i, err
+}
+
 const listBlogs = `-- name: ListBlogs :many
 SELECT id, title, content, user_id, created, updated FROM blogs ORDER BY id
 `
