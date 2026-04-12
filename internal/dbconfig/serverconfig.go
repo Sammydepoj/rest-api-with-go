@@ -1,4 +1,4 @@
-package serverconfig
+package dbconfig
 
 import (
 	"fmt"
@@ -12,6 +12,10 @@ type Config struct {
 	DatabaseUrl string `json:"database_url"`
 	Environment string `json:"environment"`
 	LogLevel    string `json:"log_level"`
+}
+
+func (c *Config) ConnectDB() any {
+	panic("unimplemented")
 }
 
 func LoadConfig() (*Config, error) {

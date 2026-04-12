@@ -43,7 +43,7 @@ func (q *Queries) CreateBlog(ctx context.Context, arg CreateBlogParams) (Blog, e
 }
 
 const createUsers = `-- name: CreateUsers :one
-INSERT INTO users(username,email,password, created, updated) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, created, updated
+INSERT INTO users(username,email,password, created, updated) VALUES ($1, $2, $3, $4, $5) RETURNING id, username,email, created, updated
 `
 
 type CreateUsersParams struct {
@@ -57,6 +57,7 @@ type CreateUsersParams struct {
 type CreateUsersRow struct {
 	ID       int32        `json:"id"`
 	Username string       `json:"username"`
+	Email    string       `json:"email"`
 	Created  sql.NullTime `json:"created"`
 	Updated  sql.NullTime `json:"updated"`
 }
@@ -73,6 +74,7 @@ func (q *Queries) CreateUsers(ctx context.Context, arg CreateUsersParams) (Creat
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
+		&i.Email,
 		&i.Created,
 		&i.Updated,
 	)
@@ -94,6 +96,31 @@ type GetUserRow struct {
 func (q *Queries) GetUser(ctx context.Context, id int32) (GetUserRow, error) {
 	row := q.db.QueryRowContext(ctx, getUser, id)
 	var i GetUserRow
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Created,
+		&i.Updated,
+	)
+	return i, err
+}
+
+const getUserByID = `-- name: GetUserByID :one
+SELECT id, username,email, created, updated FROM users WHERE id = $1
+`
+
+type GetUserByIDRow struct {
+	ID       int32        `json:"id"`
+	Username string       `json:"username"`
+	Email    string       `json:"email"`
+	Created  sql.NullTime `json:"created"`
+	Updated  sql.NullTime `json:"updated"`
+}
+
+func (q *Queries) GetUserByID(ctx context.Context, id int32) (GetUserByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getUserByID, id)
+	var i GetUserByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.Username,

@@ -5,16 +5,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/sammydepoj/golang-rest-api/dbconfig"
+	"github.com/sammydepoj/golang-rest-api/internal/dbconfig"
 	"github.com/sammydepoj/golang-rest-api/internal/handlers"
 	"github.com/sammydepoj/golang-rest-api/internal/routes"
 	"github.com/sammydepoj/golang-rest-api/internal/store"
-	"github.com/sammydepoj/golang-rest-api/serverconfig"
 )
 
 func main() {
 	//Load config
-	config, err := serverconfig.LoadConfig()
+	config, err := dbconfig.LoadConfig()
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)
 		fmt.Printf("Error loading config: %v\n", err)
